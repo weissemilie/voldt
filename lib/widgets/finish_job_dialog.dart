@@ -5,6 +5,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:voldt/core/theme/app_pallete.dart';
 import 'package:voldt/init_dependencies.dart';
 import 'package:voldt/pages/job_success_delivery_page.dart';
+import 'package:voldt/widgets/gallery_pick_button.dart';
 
 class FinishJobDialog extends StatefulWidget {
   final String title;
@@ -144,7 +145,7 @@ class _FinishJobDialogState extends State<FinishJobDialog> {
                   ),
                 ],
               ),
-              const SizedBox(height: 4),
+              const SizedBox(height: 10),
               const Text(
                 'OBS! Før opgaven kan afleveres, skal der tages/uploades et billede som bevis.',
                 style: TextStyle(
@@ -152,12 +153,11 @@ class _FinishJobDialogState extends State<FinishJobDialog> {
                   height: 1.3,
                 ),
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 80),
 
               Center(
                 child: InkWell(
-                  onTap:
-                      _pickFromCamera, // åbner kameraet direkte
+                  onTap: _pickFromCamera,
                   borderRadius: BorderRadius.circular(60),
                   child: Container(
                     width: 96,
@@ -198,7 +198,8 @@ class _FinishJobDialogState extends State<FinishJobDialog> {
                     ),
                   ],
                 ),
-              const SizedBox(height: 20),
+
+              const SizedBox(height: 60),
 
               SizedBox(
                 width: double.infinity,
@@ -223,10 +224,10 @@ class _FinishJobDialogState extends State<FinishJobDialog> {
                           : () async {
                             final ok = await _submit();
                             if (!mounted || !ok) return;
-                            // ignore: use_build_context_synchronously
-                            Navigator.of(context).pop();
                             Navigator.of(
-                              // ignore: use_build_context_synchronously
+                              context,
+                            ).pop(); // luk dialog
+                            Navigator.of(
                               context,
                               rootNavigator: true,
                             ).push(
@@ -251,6 +252,17 @@ class _FinishJobDialogState extends State<FinishJobDialog> {
                   ),
                 ),
               ),
+
+              const SizedBox(height: 22),
+              Center(
+                child: GalleryPickButton(
+                  onPicked: (file) {
+                    if (!mounted) return;
+                    setState(() => _file = file);
+                  },
+                ),
+              ),
+              const SizedBox(height: 8),
             ],
           ),
         ),

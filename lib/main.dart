@@ -36,6 +36,7 @@ class _MyAppState extends State<MyApp> {
   void initState() {
     super.initState();
     Future.microtask(() {
+      // ignore: use_build_context_synchronously
       context.read<AuthBloc>().add(AuthIsUserLoggedIn());
     });
   }

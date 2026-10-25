@@ -16,16 +16,16 @@ class JobHeaderImage extends StatelessWidget {
     final raw =
         (job['image_url'] ?? job['job_image_url'])
             ?.toString();
-    if (raw == null || raw.isEmpty) {
-      return const SizedBox.shrink();
-    }
 
+    // Lav evt. public URL hvis det er en storage-sti
     final url =
-        raw.startsWith('http')
-            ? raw
-            : serviceLocator<SupabaseClient>().storage
-                .from(bucket)
-                .getPublicUrl(raw);
+        (raw != null && raw.isNotEmpty)
+            ? (raw.startsWith('http')
+                ? raw
+                : serviceLocator<SupabaseClient>().storage
+                    .from(bucket)
+                    .getPublicUrl(raw))
+            : null;
 
     return ClipRRect(
       borderRadius: const BorderRadius.only(
@@ -34,18 +34,47 @@ class JobHeaderImage extends StatelessWidget {
       ),
       child: AspectRatio(
         aspectRatio: 16 / 10,
-        child: Image.network(
-          url,
-          fit: BoxFit.cover,
-          errorBuilder:
-              (_, __, ___) => Container(
-                color: Colors.grey.shade200,
-                alignment: Alignment.center,
-                child: const Icon(
-                  Icons.image_not_supported,
+        child:
+            (url == null || url.isEmpty)
+                ? const _HeaderPlaceholder()
+                : Image.network(
+                  url,
+                  fit: BoxFit.cover,
+                  errorBuilder:
+                      (_, __, ___) =>
+                          const _HeaderPlaceholder(),
                 ),
-              ),
-        ),
+      ),
+    );
+  }
+}
+
+class _HeaderPlaceholder extends StatelessWidget {
+  const _HeaderPlaceholder();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      color: Colors.grey.shade200,
+      alignment: Alignment.center,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const Icon(
+            Icons.image,
+            size: 40,
+            color: Colors.black38,
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'Billede kommer snart',
+            style: TextStyle(
+              color: Colors.black54,
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ],
       ),
     );
   }

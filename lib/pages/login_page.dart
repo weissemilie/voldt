@@ -96,7 +96,6 @@ class _SignUpPageState extends State<LogInPage> {
                             const SizedBox(height: 20),
                             GestureDetector(
                               onTap: () {
-                                print('Sign up tapped');
                                 context.go('/signup');
                               },
                               child: RichText(

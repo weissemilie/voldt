@@ -1,6 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:voldt/core/common/cubit/app_user/app_user_cubit.dart';
+import 'package:voldt/pages/faq_page.dart';
 import 'package:voldt/pages/job_list_page.dart';
 import 'package:voldt/pages/login_page.dart';
 import 'package:voldt/pages/signup_page.dart';
@@ -26,6 +27,10 @@ final GoRouter appRouter = GoRouter(
           (context, state) => JobInfoPage(
             job: state.extra as Map<String, dynamic>,
           ),
+    ),
+    GoRoute(
+      path: '/faq',
+      builder: (context, state) => const FaqPage(),
     ),
   ],
   redirect: (context, state) {

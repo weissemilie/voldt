@@ -49,11 +49,15 @@ class JobListPageState extends State<JobListPage> {
       final rows = await supabase
           .from('user_jobs')
           .select(
-            // fjern image_url, findes ikke på user_jobs
-            'id, job_id, title, description, address, duration, delivery, money, job_image_url, image_solved_url, approved, solved',
+            'id, job_id, title, description, address, duration, delivery, money, '
+            'job_image_url, image_solved_url, approved, solved',
           )
           .eq('user_id', uid)
-          .order('id', ascending: true);
+          .order(
+            'delivery',
+            ascending: true,
+            nullsFirst: false,
+          );
 
       // kompatibilitet: hvis widgets forventer 'image_url'
       final list =
@@ -63,9 +67,15 @@ class JobListPageState extends State<JobListPage> {
             return m;
           }).toList();
 
-      // Check for (solved == null eller false)
+      // kun ikke-løste
       final filtered =
           list.where((r) => r['solved'] != true).toList();
+
+      filtered.sort((a, b) {
+        final ad = (a['delivery'] ?? '99:99:99').toString();
+        final bd = (b['delivery'] ?? '99:99:99').toString();
+        return ad.compareTo(bd);
+      });
 
       setState(() {
         jobs = filtered;
@@ -120,7 +130,7 @@ class JobListPageState extends State<JobListPage> {
               callback: (payload) {
                 final row = payload.newRecord;
                 debugPrint('realtime UPDATE: $row');
-                if (row != null && row['solved'] == true) {
+                if (row['solved'] == true) {
                   setState(() {
                     jobs.removeWhere(
                       (j) => j['id'] == row['id'],
@@ -163,6 +173,7 @@ class JobListPageState extends State<JobListPage> {
           context.read<AppUserCubit>().logOut();
           context.go('/');
         },
+        showFaqButton: true,
       ),
       body:
           loading

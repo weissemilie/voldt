@@ -29,6 +29,7 @@ class JobInfoPage extends StatelessWidget {
           context.read<AppUserCubit>().logOut();
           context.go('/');
         },
+        showFaqButton: true,
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -61,7 +62,8 @@ class JobInfoPage extends StatelessWidget {
                     ),
                     decoration: BoxDecoration(
                       color: AppPallete.woltBlue
-                          .withOpacity(0.1),
+                      // ignore: deprecated_member_use
+                      .withOpacity(0.1),
                       borderRadius: BorderRadius.circular(
                         12,
                       ),
